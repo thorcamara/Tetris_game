@@ -166,3 +166,33 @@ function playerReset() {
     updateScore();
   }
 }
+
+function playerRotate(dir) {
+  const pos = player.pos.x;
+  let offset = 1;
+  rotate(player.matrix, dir);
+  while (collide(arena, player)) {
+    player.pos.x += offset;
+    offset = -(offset + (offset > 0 ? 1 : -1));
+    if (offset > player.matrix[0].length) {
+      rotate(player.matrix, -dir);
+      player.pos.x = pos;
+      return;
+    }
+  }
+}
+
+let dropCounter = 0;
+let dropInterval = 1000;
+let lastTime = 0;
+
+function update(time = 0) {
+  const deltaTime = time - lastTime;
+  dropCounter += deltaTime;
+  if (dropCounter > dropInterval) {
+    playerDrop();
+  }
+  lastTime = time;
+  draw();
+  requestAnimationFrame(update);
+}
